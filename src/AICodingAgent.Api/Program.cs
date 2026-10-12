@@ -5,20 +5,32 @@ using AICodingAgent.Domain.Requirements;
 using AICodingAgent.Domain.Workflows;
 using AICodingAgent.Infrastructure;
 using AICodingAgent.Infrastructure.Configuration;
+using AICodingAgent.Infrastructure.Workspace;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WebClient", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var options = new AgentOptions();
 builder.Configuration.GetSection("Agent").Bind(options);
 
-var defaultWorkspace = builder.Configuration["Agent:WorkspacePath"]
-    ?? Directory.GetCurrentDirectory();
-
-builder.Services.AddAICodingAgent(options, defaultWorkspace);
+// default workspace is no longer supplied at startup.
+// Each API request must provide `WorkspacePath`.
+builder.Services.AddAICodingAgent(options);
 
 var app = builder.Build();
+
+app.UseCors("WebClient");
 
 app.MapGet("/health", () => Results.Ok(new
 {
@@ -60,7 +72,6 @@ app.MapPost("/api/analyze", async (
             Content = content
         }
     };
-
     var context = await codeSearch.BuildContextAsync(
         request.WorkspacePath ?? Directory.GetCurrentDirectory(),
         content,
@@ -127,7 +138,7 @@ app.MapPost("/api/run", async (
     return Results.Ok(new
     {
         session.Id,
-        session.State,
+        State = session.State.ToString(),
         session.GitBranch,
         result
     });

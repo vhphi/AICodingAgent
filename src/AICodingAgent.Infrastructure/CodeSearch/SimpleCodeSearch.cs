@@ -1,16 +1,17 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using AICodingAgent.Application.Abstractions;
 using AICodingAgent.Domain.Agents;
+using AICodingAgent.Infrastructure.Workspace;
 
 namespace AICodingAgent.Infrastructure.CodeSearch;
 
 public sealed class SimpleCodeSearch : ICodeSearch
 {
-    private readonly IWorkspace _workspace;
-
-    public SimpleCodeSearch(IWorkspace workspace)
+    public SimpleCodeSearch()
     {
-        _workspace = workspace;
     }
 
     public async Task<IReadOnlyList<string>> SearchAsync(
@@ -19,7 +20,9 @@ public sealed class SimpleCodeSearch : ICodeSearch
     {
         var results = new List<string>();
 
-        foreach (var file in await _workspace.FindFilesAsync(cancellationToken))
+        var workspace = new FileSystemWorkspace(Directory.GetCurrentDirectory());
+
+        foreach (var file in await workspace.FindFilesAsync(cancellationToken))
         {
             var extension = Path.GetExtension(file);
 
@@ -32,7 +35,7 @@ public sealed class SimpleCodeSearch : ICodeSearch
 
             try
             {
-                text = await _workspace.ReadFileAsync(file, cancellationToken);
+                text = await workspace.ReadFileAsync(file, cancellationToken);
             }
             catch
             {
@@ -53,7 +56,9 @@ public sealed class SimpleCodeSearch : ICodeSearch
         string requirementText,
         CancellationToken cancellationToken)
     {
-        var files = await _workspace.FindFilesAsync(cancellationToken);
+        var workspace = new FileSystemWorkspace(workspacePath);
+
+        var files = await workspace.FindFilesAsync(cancellationToken);
 
         var keywords = requirementText
             .Split(new[] { ' ', '\r', '\n', '\t', '.', ',', ':', ';', '(', ')' },
@@ -71,7 +76,7 @@ public sealed class SimpleCodeSearch : ICodeSearch
 
             try
             {
-                text = await _workspace.ReadFileAsync(file, cancellationToken);
+                text = await workspace.ReadFileAsync(file, cancellationToken);
             }
             catch
             {

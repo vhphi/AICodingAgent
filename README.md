@@ -48,7 +48,7 @@ Infrastructure
 
 - .NET SDK 8.x
 - Git
-- Node.js 20+ nếu muốn build VS Code extension
+- Node.js 20+ nếu muốn chạy Web UI hoặc build VS Code extension
 - VS Code nếu muốn dùng extension
 - API key của LLM nếu muốn dùng provider thật
 
@@ -134,7 +134,29 @@ Health check:
 http://localhost:5099/health
 ```
 
-## 7. Analyze requirement bằng API
+## 7. Web UI
+
+The React web client lets you enter a project workspace and requirement, review
+analysis questions, answer them in multiple rounds, and run the implementation
+workflow once the requirement is ready.
+
+Start the API and web client in separate terminals:
+
+```bash
+dotnet run --project src/AICodingAgent.Api --urls http://localhost:5099
+```
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. The API URL defaults to `http://localhost:5099`
+and can be changed in the UI. The API allows browser requests from the local
+Vite development origin (`http://localhost:5173`).
+
+## 8. Analyze requirement bằng API
 
 ```bash
 curl -X POST http://localhost:5099/api/analyze \
@@ -158,7 +180,7 @@ curl -X POST http://localhost:5099/api/analyze \
   }'
 ```
 
-## 8. Chạy full workflow
+## 9. Chạy full workflow
 
 ```bash
 curl -X POST http://localhost:5099/api/run \
@@ -183,7 +205,7 @@ Nếu muốn Agent tạo branch và commit:
 
 Chỉ bật khi workspace Git đã được kiểm soát.
 
-## 9. VS Code extension
+## 10. VS Code extension
 
 Extension nằm tại:
 
@@ -226,7 +248,7 @@ Có thể đổi trong VS Code setting:
 AI Coding Agent: Api Base Url
 ```
 
-## 10. Requirement URL
+## 11. Requirement URL
 
 API/CLI có thể nhận HTTP/HTTPS URL ở `source`.
 
@@ -240,7 +262,7 @@ Ví dụ:
 
 Trong production nên thêm authentication/connector riêng cho Jira, Azure DevOps, GitHub, SharePoint thay vì cho Agent truy cập URL tùy ý.
 
-## 11. Git safety
+## 12. Git safety
 
 Mặc định CLI không commit.
 
@@ -270,7 +292,7 @@ git commit
 
 Không có chức năng force push trong MVP.
 
-## 12. Security
+## 13. Security
 
 Không đưa API key vào source code.
 
@@ -287,7 +309,7 @@ MVP đã có path traversal protection ở `FileSystemWorkspace`.
 
 LLM chỉ được yêu cầu thao tác trên file nằm trong workspace.
 
-## 13. Giới hạn MVP
+## 14. Giới hạn MVP
 
 MVP này đã có workflow thực thi thật nhưng vẫn còn những phần nên làm trước khi dùng production:
 
@@ -308,7 +330,7 @@ MVP này đã có workflow thực thi thật nhưng vẫn còn những phần n�
 - Visual Studio VSIX hoàn chỉnh.
 - VS Code webview/task UI.
 
-## 14. Roadmap
+## 15. Roadmap
 
 ### Phase 1
 - Domain/Application/Infrastructure
@@ -339,7 +361,7 @@ MVP này đã có workflow thực thi thật nhưng vẫn còn những phần n�
 - RBAC
 - Organization-wide coding rules
 
-## 15. Production recommendation
+## 16. Production recommendation
 
 Không nên cho Agent quyền:
 
@@ -368,7 +390,7 @@ git_commit
 
 và mỗi tool có policy/approval riêng.
 
-## 16. Cấu trúc source
+## 17. Cấu trúc source
 
 ```text
 AICodingAgent
@@ -391,7 +413,7 @@ AICodingAgent
 +-- README.md
 ```
 
-## 17. Important
+## 18. Important
 
 Đây là một MVP source code có thể dùng làm nền tảng phát triển thật. Không nên coi `MockLanguageModel` là AI implementation; để Agent tự implement code thật cần cấu hình provider LLM thật.
 
@@ -434,4 +456,3 @@ Request:
 Response: if state: 3 nghĩa là WaitingForClarification theo AgentState. Workflow dừng trước khi tạo plan vì isReadyForImplementation đang là false; plan, implementation, build và các bước sau vì vậy đều null. Hiện API chưa có endpoint để gửi câu trả lời tiếp nối session, nên hãy gửi lại POST /api/run với yêu cầu đã bổ sung trong
 
 Nếu chỉ muốn phân tích mà chưa chạy workflow, dùng POST /api/analyze với body tương tự; autoCommit không cần thiết cho endpoint đó.
-

@@ -52,3 +52,8 @@ public interface IAgentEventSink
         object payload,
         CancellationToken cancellationToken);
 }
+
+public interface IWorkspaceFactory
+{
+    IWorkspace Create(string root);
+}

@@ -7,12 +7,12 @@ namespace AICodingAgent.Application.Agents;
 public sealed class TestingAgent
 {
     private readonly ILanguageModel _llm;
-    private readonly IWorkspace _workspace;
+    private readonly IWorkspaceFactory _workspaceFactory;
 
-    public TestingAgent(ILanguageModel llm, IWorkspace workspace)
+    public TestingAgent(ILanguageModel llm, IWorkspaceFactory workspaceFactory)
     {
         _llm = llm;
-        _workspace = workspace;
+        _workspaceFactory = workspaceFactory;
     }
 
     public async Task<ImplementationResult> GenerateAsync(
@@ -49,9 +49,10 @@ public sealed class TestingAgent
 
         var result = JsonHelper.Deserialize<ImplementationResult>(response.Text);
 
+        var workspace = _workspaceFactory.Create(context.WorkspacePath);
         foreach (var change in result.Changes)
         {
-            await _workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
+            await workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
         }
 
         return result;

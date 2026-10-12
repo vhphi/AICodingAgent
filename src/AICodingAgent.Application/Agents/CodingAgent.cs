@@ -9,13 +9,13 @@ public sealed class CodingAgent
 {
     private readonly ICodingExecutor _executor;
     private readonly ILanguageModel _llm;
-    private readonly IWorkspace _workspace;
+    private readonly IWorkspaceFactory _workspaceFactory;
 
-    public CodingAgent(ICodingExecutor executor, ILanguageModel llm, IWorkspace workspace)
+    public CodingAgent(ICodingExecutor executor, ILanguageModel llm, IWorkspaceFactory workspaceFactory)
     {
         _executor = executor;
         _llm = llm;
-        _workspace = workspace;
+        _workspaceFactory = workspaceFactory;
     }
 
     public Task<CodingExecutionResult> ImplementCodexAsync(
@@ -75,9 +75,11 @@ public sealed class CodingAgent
 
         var result = JsonHelper.Deserialize<ImplementationResult>(response.Text);
 
+        var workspace = _workspaceFactory.Create(context.WorkspacePath);
+
         foreach (var change in result.Changes)
         {
-            await _workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
+            await workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
         }
 
         return result;
@@ -129,6 +131,8 @@ public sealed class CodingAgent
 
         var result = JsonHelper.Deserialize<ImplementationResult>(response.Text);
 
+        var workspace = _workspaceFactory.Create(context.WorkspacePath);
+
         foreach (var change in result.Changes)
         {
             if (!string.Equals(change.Action, "create", StringComparison.OrdinalIgnoreCase) &&
@@ -137,7 +141,7 @@ public sealed class CodingAgent
                 continue;
             }
 
-            await _workspace.WriteFileAsync(
+            await workspace.WriteFileAsync(
                 change.Path,
                 change.Content,
                 cancellationToken);
@@ -175,9 +179,11 @@ public sealed class CodingAgent
 
         var result = JsonHelper.Deserialize<ImplementationResult>(response.Text);
 
+        var workspace = _workspaceFactory.Create(context.WorkspacePath);
+
         foreach (var change in result.Changes)
         {
-            await _workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
+            await workspace.WriteFileAsync(change.Path, change.Content, cancellationToken);
         }
 
         return result;

@@ -58,7 +58,11 @@ var options = new AgentOptions
 
 var services = new ServiceCollection();
 
-services.AddAICodingAgent(options, workspace);
+services.AddAICodingAgent(options);
+
+// Provide a workspace factory for CLI usage
+services.AddSingleton<AICodingAgent.Application.Abstractions.IWorkspaceFactory>(
+    new AICodingAgent.Infrastructure.Workspace.FileSystemWorkspaceFactory());
 
 using var serviceProvider = services.BuildServiceProvider();
 

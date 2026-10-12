@@ -21,15 +21,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAICodingAgent(
         this IServiceCollection services,
-        AgentOptions options,
-        string workspacePath)
+        AgentOptions options)
     {
         services.AddSingleton(options);
 
         services.AddHttpClient();
 
-        services.AddSingleton<IWorkspace>(
-            new FileSystemWorkspace(workspacePath));
+        // Workspace instances are created per-request based on the provided workspace path.
+        services.AddSingleton<IWorkspaceFactory, FileSystemWorkspaceFactory>();
 
         services.AddSingleton<ProcessRunner>();
         services.AddSingleton<ICodeSearch, SimpleCodeSearch>();
