@@ -1,0 +1,48 @@
+{
+  "name": "ai-coding-agent",
+  "displayName": "AI Coding Agent",
+  "description": "Requirement-driven AI software engineering agent.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:aicodingagent.analyzeRequirement",
+    "onCommand:aicodingagent.run"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aicodingagent.analyzeRequirement",
+        "title": "AI Coding Agent: Analyze Requirement"
+      },
+      {
+        "command": "aicodingagent.run",
+        "title": "AI Coding Agent: Implement Requirement"
+      }
+    ],
+    "configuration": {
+      "title": "AI Coding Agent",
+      "properties": {
+        "aicodingagent.apiBaseUrl": {
+          "type": "string",
+          "default": "http://localhost:5099"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.95.0",
+    "typescript": "^5.7.0"
+  }
+}

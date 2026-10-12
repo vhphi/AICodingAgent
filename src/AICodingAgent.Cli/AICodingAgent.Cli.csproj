@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType> 
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AICodingAgent.Application\AICodingAgent.Application.csproj" />
+    <ProjectReference Include="..\AICodingAgent.Infrastructure\AICodingAgent.Infrastructure.csproj" />
+    <ProjectReference Include="..\AICodingAgent.Domain\AICodingAgent.Domain.csproj" />
+  </ItemGroup>
+</Project>
