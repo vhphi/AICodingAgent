@@ -144,6 +144,54 @@ app.MapPost("/api/run", async (
     });
 });
 
+app.MapPost("/api/ask", async (
+    AskRequest request,
+    ILanguageModel llm,
+    ICodeSearch codeSearch,
+    CancellationToken cancellationToken) =>
+{
+    if (string.IsNullOrWhiteSpace(request?.Prompt))
+    {
+        return Results.BadRequest(new { error = "Prompt is required." });
+    }
+
+    var systemPrompt = string.IsNullOrWhiteSpace(request.SystemPrompt)
+        ? "You are a helpful assistant. Provide concise, accurate answers. If the question relates to code or the provided project workspace, include actionable guidance."
+        : request.SystemPrompt;
+
+    var userPrompt = request.Prompt ?? string.Empty;
+
+    if (!string.IsNullOrWhiteSpace(request.WorkspacePath))
+    {
+        try
+        {
+            var context = await codeSearch.BuildContextAsync(
+                request.WorkspacePath,
+                userPrompt,
+                cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(context.ContextText))
+            {
+                userPrompt += "\n\nPROJECT CONTEXT:\n" + context.ContextText;
+            }
+        }
+        catch (Exception ex)
+        {
+            // don't fail the whole request if context build fails; return answer without project context
+            userPrompt += $"\n\n[Context build failed: {ex.Message}]";
+        }
+    }
+
+    var response = await llm.CompleteAsync(
+        new CompletionRequest(systemPrompt, userPrompt),
+        cancellationToken);
+
+    return Results.Ok(new
+    {
+        answer = response.Text,
+        model = response.Model
+    });
+});
 app.Run();
 
 public class AnalyzeRequest
@@ -158,4 +206,22 @@ public sealed class RunRequest : AnalyzeRequest
 {
     public string? RequirementId { get; set; }
     public bool AutoCommit { get; set; }
+}
+
+public sealed class AskRequest
+{
+    /// <summary>
+    /// Optional system prompt to guide the assistant; if omitted a sensible default is used.
+    /// </summary>
+    public string? SystemPrompt { get; set; }
+
+    /// <summary>
+    /// User question or instruction (required).
+    /// </summary>
+    public string? Prompt { get; set; }
+
+    /// <summary>
+    /// Optional workspace path. If provided the API will try to include project context in the prompt.
+    /// </summary>
+    public string? WorkspacePath { get; set; }
 }

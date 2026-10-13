@@ -136,9 +136,10 @@ http://localhost:5099/health
 
 ## 7. Web UI
 
-The React web client lets you enter a project workspace and requirement, review
-analysis questions, answer them in multiple rounds, and run the implementation
-workflow once the requirement is ready.
+The React web client opens in quick Q&A mode, with optional project context and
+Markdown-formatted answers. Switch to Agent implement mode to analyze a
+requirement, answer clarification questions, and run the implementation
+workflow in a required project workspace.
 
 Start the API and web client in separate terminals:
 
