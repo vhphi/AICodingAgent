@@ -47,6 +47,11 @@ button { cursor: pointer; }
 .mode-switch button { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 5px; padding: 0 12px; color: #67736c; background: transparent; font-size: 11px; font-weight: 600; }
 .mode-switch button.is-selected { border-color: #e1e8e3; color: #315e47; background: #fff; box-shadow: 0 1px 2px rgb(31 43 39 / 6%); }
 .mode-switch button:disabled { cursor: not-allowed; opacity: .6; }
+.session-actions { display: flex; justify-content: flex-end; gap: 8px; margin: 0 0 12px; }
+.session-actions .button { min-height: 34px; font-size: 10px; }
+.button-stop { color: #a65046; background: #fff8f6; border-color: #f0d9d5; }
+.button-stop:not(:disabled):hover { background: #fff0ed; }
+.session-notice { margin: 0 0 12px; padding: 10px 12px; border: 1px solid #dfe9e3; border-radius: 6px; background: #f4f8f5; color: #426a52; font-size: 11px; line-height: 1.5; }
 .steps-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px 18px 17px; position: sticky; top: 20px; }
 .steps-heading { color: #a0a7ae; font: 500 10px "DM Mono", monospace; letter-spacing: 1.1px; padding: 0 5px 21px; }
 .step-item { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 0 4px 25px; color: #9ba2aa; }
@@ -65,6 +70,7 @@ button { cursor: pointer; }
 .panel { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 5px 18px rgb(31 43 39 / 2.5%); }
 .ask-panel { padding: 25px 27px 21px; }
 .ask-panel > .panel-header { margin-bottom: 22px; }
+.new-ask-session { flex: 0 0 auto; min-height: 34px; padding: 0 10px; font-size: 10px; white-space: nowrap; }
 .ask-panel form textarea { min-height: 94px; }
 .conversation { margin-top: 25px; border-top: 1px solid #e9edeb; }
 .conversation-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 0 7px; }
@@ -94,6 +100,11 @@ button { cursor: pointer; }
 .markdown-answer th, .markdown-answer td { padding: 7px 10px; border: 1px solid #e3e8e4; text-align: left; }
 .markdown-answer th { background: #f2f6f3; color: #40594a; font-weight: 700; }
 .markdown-answer hr { border: 0; border-top: 1px solid #e8ece9; margin: 17px 0; }
+.agent-analysis-summary { margin: 3px 0 19px; padding: 11px 14px; border: 1px solid #e8eee9; border-radius: 6px; background: #f8faf8; font-size: 11px; }
+.agent-analysis-summary > :first-child { margin-top: 0; }
+.agent-analysis-summary > :last-child { margin-bottom: 0; }
+.agent-analysis-summary h2, .agent-analysis-summary h3 { font-size: 12px; }
+.agent-result { margin-top: 17px; padding-top: 16px; border-top: 1px solid #eff1f2; }
 .answer-model { margin-top: 9px; color: #9aa39d; font: 9px "DM Mono", monospace; }
 .request-panel { padding: 25px 27px 21px; }
 .panel-header { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 26px; }
@@ -205,8 +216,12 @@ textarea { resize: vertical; width: 100%; border: 1px solid #e0e3e6; border-radi
   .step-name { font-size: 9px; }
   .step-marker { width: 21px; height: 21px; flex-basis: 21px; }
   .request-panel, .questions-panel, .ready-panel, .result-panel, .running-panel, .ask-panel { padding-left: 17px; padding-right: 17px; }
+  .ask-panel > .panel-header { flex-wrap: wrap; }
+  .ask-panel .panel-title-wrap { flex: 1 1 100%; }
   .mode-switch { width: 100%; }
   .mode-switch button { flex: 1 1 0; padding: 0 7px; font-size: 10px; }
+  .session-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .session-actions .button { padding: 0 8px; }
   .panel-header { align-items: flex-start; margin-bottom: 20px; }
   .panel-header p { max-width: 245px; }
   .step-label { padding: 5px 6px; font-size: 8px; }

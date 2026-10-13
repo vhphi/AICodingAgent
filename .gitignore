@@ -7,7 +7,6 @@ obj/
 *.suo
 appsettings.Local.json
 data/
-workspace/
 web/node_modules/.package-lock.json
 web/node_modules/.bin/baseline-browser-mapping
 web/node_modules/.bin/baseline-browser-mapping.cmd
